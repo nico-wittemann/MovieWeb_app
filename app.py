@@ -11,7 +11,8 @@ CORS(app)
 # Configuration function
 def configure_app(app):
     current_directory = os.path.abspath(os.path.dirname(__file__))
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(current_directory, "data", "library.sqlite")}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', f'sqlite:///{os.path.join(current_directory, "data", "library.sqlite")}')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database function
 def initialize_database(app, db):
@@ -31,10 +32,11 @@ def home():
 
 def main():    # DELETE LATER
     print("main")
-    data_manager = SQLiteDataManager("library.sqlite")
-    data_manager.add_movie("Inception", "Christopher Nolan", 2010, 8.8)
-    print("Filme hinzugefügt!")
+    with app.app_context():
+        data_manager = SQLiteDataManager(db)
+        data_manager.add_movie("Inception", "Christopher Nolan", 2010, 8.8)
+        print("Filme hinzugefügt!")
 
 if __name__ == '__main__':
     main()   # DELETE Later
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    app.run(host="127.0.0.1", port=5000, debug=False)

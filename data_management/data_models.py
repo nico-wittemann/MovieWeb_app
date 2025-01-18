@@ -8,7 +8,7 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column((db.String), nullable=False)
+    name = db.Column(db.String, nullable=False)
     movies = db.relationship('Movie', backref='user')
 
 
