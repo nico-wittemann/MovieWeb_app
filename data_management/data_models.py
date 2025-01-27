@@ -3,14 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+user_movie_association  = db.Table(
+    'user_movie',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('movie_id', db.Integer, db.ForeignKey('movies.id'), primary_key=True)
+)
+
 class User(db.Model):
-    """"""
+    """User Table"""
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
-    movies = db.relationship('Movie', backref='user')
-
+    movies = db.relationship('Movie', secondary=user_movie_association, back_populates='users')
 
     def __str__(self):
         """Returns a string representation of the user."""
@@ -18,7 +23,7 @@ class User(db.Model):
 
 
 class Movie(db.Model):
-    """"""
+    """Movie Table"""
     __tablename__ = 'movies'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -26,8 +31,7 @@ class Movie(db.Model):
     director = db.Column(db.String, nullable=False)
     publication_year = db.Column(db.Integer, nullable=False)
     rating = db.Column(db.Float, nullable=False)                    # Datatype depends what you get change later maybe.
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-
+    users = db.relationship('User', secondary=user_movie_association, back_populates='movies')
 
     def __str__(self):
         """Returns a string representation of the movie."""

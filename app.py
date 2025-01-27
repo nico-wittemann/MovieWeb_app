@@ -34,7 +34,7 @@ def main():    # DELETE LATER
     print("main")
     with app.app_context():
         data_manager = SQLiteDataManager(db)
-        data_manager.add_movie("Inception", "Christopher Nolan", 2010, 8.8)
+        data_manager.get_user_movies(1)
         print("Filme hinzugefügt!")
 
 if __name__ == '__main__':
