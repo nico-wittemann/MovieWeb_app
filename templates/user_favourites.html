@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title>Home - MovieWeb App</title>
+  </head>
+<body>
+    <div class="list-movies-title">
+        <h1>{{ username }}'s movie app</h1>
+            {% if action_result_add_movie %}
+                <p>{{ action_result_add_movie }}</p>
+            {% endif %}
+        <br><br>
+          <a href="{{ url_for('add_movie_to_user', user_id=user_id) }}">Add new movie to the userlist</a>
+        <br><br>
+          <a href="{{ url_for('home') }}">Update a movie NOT YET</a>
+        <br><br>
+          <a href="{{ url_for('home') }}">Delete a movie NOT YET</a>
+        <br><br>
+          <a href="{{ url_for('home') }}">Home</a>
+    <br><br>
+    </div>
+    <div>
+        <ol class="movie-grid">
+            {% for movie in user_movies %}
+        <li>
+            <div class="movie">
+                <img class="movie-poster" src="https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg" alt="Poster Iron Man">
+                <div class="movie-title">{{ movie.title }}</div>
+                <div class="movie-year">{{ movie.publication_year }}</div>
+                <div class="movie-year">{{ movie.rating }}</div>
+            </div>
+        </li>
+            {% endfor %}
+
+        </ol>
+    </div>
+</body>
+</html>
+

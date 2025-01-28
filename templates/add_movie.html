@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Movie - MovieWeb App</title>
+</head>
+<body>
+
+<h1>Add user</h1>
+  <form action="{{ url_for('add_user') }}" method="POST">
+  <label for="movie_name">Movie name:</label>
+  <input type="text" id="movie_name" name="movie_name" required><br><br>
+  <input type="submit" value="Add movie">
+  </form>
+
+</body>
+</html>
