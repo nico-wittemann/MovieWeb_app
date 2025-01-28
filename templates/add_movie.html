@@ -6,8 +6,8 @@
 </head>
 <body>
 
-<h1>Add user</h1>
-  <form action="{{ url_for('add_user') }}" method="POST">
+<h1>Add movie</h1>
+  <form action="{{ url_for('add_movie_to_user', user_id=user_id) }}" method="POST">
   <label for="movie_name">Movie name:</label>
   <input type="text" id="movie_name" name="movie_name" required><br><br>
   <input type="submit" value="Add movie">

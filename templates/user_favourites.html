@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-      <title>Home - MovieWeb App</title>
+      <title>User favourites - MovieWeb App</title>
   </head>
 <body>
     <div class="list-movies-title">
@@ -27,10 +27,12 @@
             {% for movie in user_movies %}
         <li>
             <div class="movie">
-                <img class="movie-poster" src="https://m.media-amazon.com/images/M/MV5BMTczNTI2ODUwOF5BMl5BanBnXkFtZTcwMTU0NTIzMw@@._V1_SX300.jpg" alt="Poster Iron Man">
+                <img class="movie-poster" src="{{ movie.poster_url }}" alt="Poster {{ movie.title }}">
                 <div class="movie-title">{{ movie.title }}</div>
+                <div class="movie-year">{{ movie.director }}</div>
                 <div class="movie-year">{{ movie.publication_year }}</div>
-                <div class="movie-year">{{ movie.rating }}</div>
+                <div class="movie-year">{{ movie.rating }}/10</div>
+                <br>
             </div>
         </li>
             {% endfor %}

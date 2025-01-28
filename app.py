@@ -44,9 +44,10 @@ def list_users():
 @app.route('/users/<int:user_id>') # get_user_movies 3 Bearbeiten das richtige werte ausgegeben werden
 def list_user_movies(user_id):
     """"""
+    action_result_add_movie = request.args.get('action_result_add_movie')
     user_movies = data_manager.get_user_movies(user_id)
     username = data_manager.get_username_by_id(user_id)
-    return render_template('user_favourites.html', user_movies=user_movies, username=username, user_id=user_id), 200
+    return render_template('user_favourites.html', user_movies=user_movies, username=username, user_id=user_id, action_result_add_movie=action_result_add_movie), 200
 
 
 @app.route('/add_user', methods=['GET', 'POST']) # add_user 4
@@ -61,17 +62,18 @@ def add_user():
         return render_template('home.html', success_message=success_message)
 
 
-@app.route('/users/<int:user_id>/add_movie') # add_movie_to_user 5
+
+@app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST']) # add_movie_to_user 5
 def add_movie_to_user(user_id):
     """"""
     if request.method == 'GET':
-        return render_template('add_movie.html'), 200
+        return render_template('add_movie.html', user_id=user_id), 200
 
     if request.method == 'POST':
         movie_name = request.form['movie_name']
         action_result_add_movie = data_manager.add_movie_to_user(user_id, movie_name)
-        return render_template('add_movie.html', action_result_add_movie=action_result_add_movie)
-
+        print(action_result_add_movie)
+        return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
 
 
 
