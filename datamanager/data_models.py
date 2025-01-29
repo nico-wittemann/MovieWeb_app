@@ -30,7 +30,7 @@ class Movie(db.Model):
     title = db.Column(db.String, nullable=False)
     director = db.Column(db.String, nullable=False)
     publication_year = db.Column(db.Integer, nullable=False)
-    rating = db.Column(db.Float, nullable=False)
+    rating = db.Column(db.Float, nullable=True)
     poster_url = db.Column(db.String, nullable=True)
     users = db.relationship('User', secondary=user_movie_association, back_populates='movies')
 

@@ -9,7 +9,6 @@ from API_Movies import api_request_data
 app = Flask(__name__)
 CORS(app)
 
-
 # Configuration function
 def configure_app(app):
     current_directory = os.path.abspath(os.path.dirname(__file__))
@@ -29,25 +28,25 @@ data_manager = SQLiteDataManager(db)
 
 
 # Flask Routes
-@app.route('/')  # Navigation!
+@app.route('/')
 def home():
     return render_template('home.html'), 200
 
 
-@app.route('/users') # get_all_users 2
+@app.route('/users')
 def list_users():
     """"""
     users = data_manager.get_all_users()
     return render_template('users.html', users=users), 200
 
 
-@app.route('/users/<int:user_id>') # get_user_movies 3 Bearbeiten das richtige werte ausgegeben werden
+@app.route('/users/<int:user_id>')
 def list_user_movies(user_id):
     """"""
     action_result_add_movie = request.args.get('action_result_add_movie')
     user_movies = data_manager.get_user_movies(user_id)
-    username = data_manager.get_username_by_id(user_id)
-    return render_template('user_favourites.html', user_movies=user_movies, username=username, user_id=user_id, action_result_add_movie=action_result_add_movie), 200
+    user = data_manager.get_user(user_id)
+    return render_template('user_favourites.html', user_movies=user_movies, user=user, user_id=user_id, action_result_add_movie=action_result_add_movie), 200
 
 
 @app.route('/add_user', methods=['GET', 'POST']) # add_user 4
@@ -62,7 +61,6 @@ def add_user():
         return render_template('home.html', success_message=success_message)
 
 
-
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST']) # add_movie_to_user 5
 def add_movie_to_user(user_id):
     """"""
@@ -72,24 +70,29 @@ def add_movie_to_user(user_id):
     if request.method == 'POST':
         movie_name = request.form['movie_name']
         action_result_add_movie = data_manager.add_movie_to_user(user_id, movie_name)
-        print(action_result_add_movie)
         return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
 
 
+@app.route('/users/<int:user_id>/remove_movie/<int:movie_id>', methods=['POST'])
+def remove_movie_from_user(movie_id, user_id):
+    action_result_add_movie = data_manager.remove_movie_from_favourites(movie_id, user_id)
+    return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
 
 
-@app.route('/users/<int:user_id>/update_movie/<int:movie_id>') # update_movie 6
-def update_movie():
-    pass
+@app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST']) # update_movie 6
+def update_movie(movie_id, user_id):
+    if request.method == 'GET':
+        user = data_manager.get_user(user_id)
+        movie = data_manager.get_movie(movie_id)
+        return render_template('update.html', user=user, movie=movie)
 
-
-@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>') # delete_movie_from_favourites 7
-def delete_movie():
-    pass
-
-
-
-
+    if request.method == 'POST':
+        new_title = request.form['title']
+        new_director = request.form['director']
+        new_publication_year = request.form['publication_year']
+        new_rating = request.form['rating']
+        action_result_add_movie = data_manager.update_movie(user_id, movie_id, new_title, new_director, new_publication_year, new_rating)
+        return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
 
 
 if __name__ == '__main__':
@@ -97,7 +100,11 @@ if __name__ == '__main__':
 
 
 
-#todo Implement OMDB API!
-#todo Use OMDB API in user_favourites!
+
+
+
+
+#todo Ordnersturktur implementieren
+#todo Comments!:(
 
 

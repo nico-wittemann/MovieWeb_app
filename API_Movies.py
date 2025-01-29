@@ -29,7 +29,8 @@ def api_request_data(title: str):
             if "Title" in movie_infos and "Year" in movie_infos and "Poster" in movie_infos:
                 title = movie_infos["Title"]
                 year = movie_infos["Year"]
-                rating = movie_infos["Ratings"][0]["Value"] if "Ratings" in movie_infos  else "No rating available"
+                rating = movie_infos.get("Ratings", False)
+                rating = rating[0]["Value"] if rating else None
                 poster_url = movie_infos["Poster"]
                 director = movie_infos["Director"] if "Director" in movie_infos else "No director available"
                 return title, year, rating, poster_url, director

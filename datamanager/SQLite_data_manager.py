@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from datamanager.data_manager_interface import DataManagerInterface
-from datamanager.data_models import User, Movie, db
+from datamanager.data_models import User, Movie, db, user_movie_association
 from API_Movies import api_request_data
 
 
@@ -11,10 +11,7 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def get_all_users(self):
-        """
-
-        :return:
-        """
+        """"""
         try:
             list_of_all_users = self.db.session.query(User).all()
             return list_of_all_users
@@ -22,21 +19,6 @@ class SQLiteDataManager(DataManagerInterface):
         except SQLAlchemyError as e:
             self.db.session.rollback()
             print(f"A database error occurred at getting all users: {e}")
-
-    def get_username_by_id(self, user_id):
-        """
-        """
-        try:
-            user = self.db.session.query(User) \
-            .filter(User.id == user_id).first()
-            if not user:
-                return "Unknown"
-            return user.name
-
-        except SQLAlchemyError as e:
-            self.db.session.rollback()
-            print(f"A database error occurred at getting all users: {e}")
-
 
 
     def get_all_movies(self):
@@ -50,13 +32,13 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def get_user_movies(self, user_id):
-        """"""
+        """Returns the movie object."""
         try:
             user = self.db.session.query(User).get(user_id)
             if not user:
                 raise ValueError(f"User with ID {user_id} not found.")
             movies = user.movies
-            return movies # Careful it returns the object now (for loop and movie.title or .director) to get specifics
+            return movies
 
         except ValueError as e:
             self.db.session.rollback()
@@ -85,21 +67,8 @@ class SQLiteDataManager(DataManagerInterface):
             print(f"A database error occurred while adding the user: {e}")
 
 
-    def add_movie_to_user(self, user_id, movie_name): # Change later to title maybe, or make sure to display id in flask!
-        """
-        Prompt the user to enter a movie name, fetch its details from an API,
-        and ensure it is not already in the movie collection.
-
-        Args:
-            movies (dict): A dictionary with existing movies,
-                                where the keys are the movie titles.
-
-        Returns:
-            tuple: A tuple containing the movie details fetched from the API:
-                        (title (str), year (str), rating (str), poster_url (str)).
-                        These details are only returned if the movie is valid and
-                        not already in the collection.
-        """
+    def add_movie_to_user(self, user_id, movie_name):
+        """"""
         try:
             user = self.db.session.query(User).get(user_id)
             if not user:
@@ -109,23 +78,30 @@ class SQLiteDataManager(DataManagerInterface):
             if api_data:
                 title, publication_year, string_rating, poster_url, director = api_data
             else:
-                return f"Title {(movie_name)} was not found in Database"
-            movies = self.get_user_movies(user_id)
-            titles = [movie.title for movie in movies]
-            if title in titles:
-                return f"Movie {title} already exist!"
-            else:
+                return f"Title {(movie_name)} was not found in online database"
+
+            existing_movie = self.db.session.query(Movie).filter(Movie.title == title).first()
+            if existing_movie:
+                if existing_movie not in user.movies:
+                    user.movies.append(existing_movie)
+                    self.db.session.commit()
+                    return f"Movie {title} successfully assigned to your list."
+                else:
+                    return f"Movie {title} is already in your list."
+            if string_rating is not None:
                 rating = float(string_rating.split("/")[0])
-                new_movie = Movie(
-                    title = title,
-                    director = director,
-                    publication_year = publication_year,
-                    rating = rating,
-                    poster_url = poster_url
-                )
-                user.movies.append(new_movie)
-                self.db.session.commit()
-                return f"Movie {title} successfully assigned to User {user.name}."
+            else:
+                rating = None
+            new_movie = Movie(
+                title = title,
+                director = director,
+                publication_year = publication_year,
+                rating = rating,
+                poster_url = poster_url
+            )
+            user.movies.append(new_movie)
+            self.db.session.commit()
+            return f"Movie {title} successfully assigned to your list."
 
         except ValueError as e:
             self.db.session.rollback()
@@ -138,31 +114,37 @@ class SQLiteDataManager(DataManagerInterface):
 
 
 
-    def update_movie(self, movie_id, new_title, new_director, new_publication_year, new_rating):
+    def update_movie(self, user_id, movie_id, new_title, new_director, new_publication_year, new_rating):
         """"""
-        if self._input_not_string(new_title):
-            raise TypeError("Title must be a string.")
-        if self._input_not_string(new_director):
-            raise TypeError("Director must be a string.")
-        if self._input_not_int(new_publication_year):
-            raise TypeError("Publication year must be an integer.")
-        if self._input_not_float(new_rating):
-            raise TypeError("Rating must be a float.")
-
         try:
-            movie_to_update = self.db.session.query(Movie) \
-                .filter(Movie.id == movie_id) \
-                .one()
-            if new_title:
-                movie_to_update.title = new_title
-            if new_director:
-                movie_to_update.director = new_director
-            if new_publication_year:
-                movie_to_update.publication_year = new_publication_year
-            if new_rating:
-                movie_to_update.rating = new_rating
-            self.db.session.commit()
+            movie = self.get_movie(movie_id)
+            user = self.db.session.query(User).get(user_id)
+            poster_url = movie.poster_url
+            new_rating = float(new_rating)
+            new_publication_year = int(new_publication_year)
+            if self._input_not_string(new_title):
+                raise TypeError("Title must be a string.")
+            if self._input_not_string(new_director):
+                raise TypeError("Director must be a string.")
+            if self._input_not_int(new_publication_year):
+                raise TypeError("Publication year must be an integer.")
+            if self._input_not_float_or_None(new_rating):
+                raise TypeError("Rating must be a float.")
 
+            self.remove_movie_from_favourites(movie_id, user_id)
+            new_movie = Movie(
+                title=new_title,
+                director=new_director,
+                publication_year=new_publication_year,
+                rating=new_rating,
+                poster_url=poster_url
+            )
+            user.movies.append(new_movie)
+            self.db.session.commit()
+            return f"Movie {movie.title} successfully updated in your list."
+
+        except TypeError as e:
+            print(f"Type error: {e}")
         except NoResultFound:
             self.db.session.rollback()
             print(f"Movie with ID {movie_id} not found.")
@@ -171,20 +153,60 @@ class SQLiteDataManager(DataManagerInterface):
             print(f"A database error occurred while updating the movie: {e}")
 
 
-    def delete_movie_from_favourites(self, movie_id): #DELETE FROM USERS LIST!
+    def remove_movie_from_favourites(self, movie_id, user_id):
         """"""
         try:
-            self.db.session.query(Movie) \
-                .filter(Movie.id == movie_id) \
-                .delete()
-            self.db.session.commit()
+            movie = self.db.session.query(Movie).get(movie_id)
+            if not movie:
+                raise ValueError(f"Movie with ID {movie_id} not found.")
+            user = self.db.session.query(User).get(user_id)
+            if not user:
+                raise ValueError(f"User with ID {user_id} not found.")
 
-        except NoResultFound:
+            if movie in user.movies:
+                user.movies.remove(movie)
+                self.db.session.commit()
+            if len(movie.users) == 0:
+                db.session.delete(movie)
+                db.session.commit()
+            return f"The movie '{movie.title}' has been removed from your list."
+
+        except ValueError as e:
             self.db.session.rollback()
-            print(f"Movie with ID {movie_id} not found.")
+            print(e)
         except SQLAlchemyError as e:
             self.db.session.rollback()
             print(f"A database error occurred while updating the movie: {e}")
+
+
+    def get_user(self, user_id):
+        """"""
+        try:
+            user = self.db.session.query(User) \
+            .filter(User.id == user_id).first()
+            if not user:
+                return "Unknown"
+            return user
+
+        except SQLAlchemyError as e:
+            self.db.session.rollback()
+            print(f"A database error occurred at getting all users: {e}")
+
+
+    def get_movie(self, movie_id):
+        """"""
+        try:
+            movie = self.db.session.query(Movie) \
+            .filter(Movie.id == movie_id).first()
+            if not movie:
+                return "Unknown"
+            return movie
+
+        except SQLAlchemyError as e:
+            self.db.session.rollback()
+            print(f"A database error occurred at getting all movies: {e}")
+
+
 
 
 #Functions for input validation:
@@ -207,63 +229,13 @@ class SQLiteDataManager(DataManagerInterface):
         else:
             return True
 
-    def _input_not_float(self, new_input):
-        if isinstance(new_input, float):
+    def _input_not_float_or_None(self, new_input):
+        if isinstance(new_input, float) or None:
             return False
         else:
             return True
 
 
-
-# Not used but could be used for extension:
-    def update_user(self, user_id, new_username):
-        if self._input_not_string(new_username):
-            raise TypeError("Username must be a string.")
-        if self._username_already_used(new_username):
-            raise ValueError("Username is already used.")
-
-        try:
-            user_to_update = self.db.session.query(User) \
-                .filter(User.id == user_id) \
-                .one()
-            user_to_update.name = new_username
-            self.db.session.commit()
-
-        except NoResultFound:
-            self.db.session.rollback()
-            print(f"Movie with ID {user_id} not found.")
-        except SQLAlchemyError as e:
-            self.db.session.rollback()
-            print(f"A database error occurred while updating the user: {e}")
-
-
-    def delete_user(self, user_id):
-        try:
-            self.db.session.query(User) \
-                .filter(User.id == user_id) \
-                .delete()
-            self.db.session.commit()
-
-        except NoResultFound:
-            self.db.session.rollback()
-            print(f"User with ID {user_id} not found.")
-        except SQLAlchemyError as e:
-            self.db.session.rollback()
-            print(f"A database error occurred while updating the movie: {e}")
-
-    def delete_movie(self, movie_id):
-        try:
-            self.db.session.query(Movie) \
-                .filter(Movie.id == movie_id) \
-                .delete()
-            self.db.session.commit()
-
-        except NoResultFound:
-            self.db.session.rollback()
-            print(f"Movie with ID {movie_id} not found.")
-        except SQLAlchemyError as e:
-            self.db.session.rollback()
-            print(f"A database error occurred while updating the movie: {e}")
 
 
 

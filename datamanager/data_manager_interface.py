@@ -21,24 +21,38 @@ class DataManagerInterface(ABC):
     def add_user(self, input_name):
         pass
 
-
     @abstractmethod
     def add_movie_to_user(self, user_id, movie_id):
         pass
 
     @abstractmethod
-    def update_user(self, user_id, new_name):
+    def update_movie(self, user_id, movie_id, new_title, new_director, new_publication_year, new_rating):
         pass
 
     @abstractmethod
-    def update_movie(self, movie_id, new_title, new_director, new_publication_year, new_rating):
+    def remove_movie_from_favourites(self, movie_id, user_id):
         pass
 
     @abstractmethod
-    def delete_user(self, user_id):
+    def get_user(self, user_id):
         pass
 
     @abstractmethod
-    def delete_movie(self, movie_id):
+    def get_movie(self, movie_id):
         pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
