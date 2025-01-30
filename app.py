@@ -152,6 +152,21 @@ def update_movie(movie_id, user_id):
         return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
 
 
+@app.errorhandler(400)
+def internal_server_error(e):
+    return render_template('400.html', e=e), 400
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html', e=e), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html', e=e), 500
+
+
 if __name__ == '__main__':
     app.run(host="127.0.0.1", port=5000, debug=True)
 
