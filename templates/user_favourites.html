@@ -9,8 +9,8 @@
 <body>
     <div class="list-movies-title">
         <h1>{{ user.name }}'s movie app</h1>
-            {% if action_result_add_movie %}
-                <p>{{ action_result_add_movie }}</p>
+            {% if action_result %}
+                <p>{{ action_result }}</p>
             {% endif %}
         <br><br>
           <a href="{{ url_for('add_movie_to_user', user_id=user_id) }}">Add new movie to the userlist</a>

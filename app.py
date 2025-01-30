@@ -60,11 +60,11 @@ def list_user_movies(user_id):
         user_id (int): The ID of the user.
     """
     user = data_manager.get_user(user_id)
-    action_result_add_movie = request.args.get('action_result_add_movie')
+    action_result = request.args.get('action_result')
     user_movies = data_manager.get_user_movies(user_id)
     if user_movies == "error":
         return render_template('404.html'), 404
-    return render_template('user_favourites.html', user_movies=user_movies, user=user, user_id=user_id, action_result_add_movie=action_result_add_movie), 200
+    return render_template('user_favourites.html', user_movies=user_movies, user=user, user_id=user_id, action_result=action_result), 200
 
 
 @app.route('/add_user', methods=['GET', 'POST']) # add_user 4
@@ -106,8 +106,8 @@ def add_movie_to_user(user_id):
 
     if request.method == 'POST':
         movie_name = request.form['movie_name']
-        action_result_add_movie = data_manager.add_movie_to_user(user_id, movie_name)
-        return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
+        action_result = data_manager.add_movie_to_user(user_id, movie_name)
+        return redirect(url_for('list_user_movies', action_result=action_result, user_id=user_id))
 
 
 @app.route('/users/<int:user_id>/remove_movie/<int:movie_id>', methods=['POST'])
@@ -123,8 +123,8 @@ def remove_movie_from_user(movie_id, user_id):
         movie_id (int): The ID of the movie to be removed.
         user_id (int): The ID of the user whose movie list is being modified.
     """
-    action_result_add_movie = data_manager.remove_movie_from_favourites(movie_id, user_id)
-    return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
+    action_result = data_manager.remove_movie_from_favourites(movie_id, user_id)
+    return redirect(url_for('list_user_movies', action_result=action_result, user_id=user_id))
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST']) # update_movie 6
@@ -153,8 +153,8 @@ def update_movie(movie_id, user_id):
         new_director = request.form['director']
         new_publication_year = request.form['publication_year']
         new_rating = request.form['rating']
-        action_result_add_movie = data_manager.update_movie(user_id, movie_id, new_title, new_director, new_publication_year, new_rating)
-        return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
+        action_result = data_manager.update_movie(user_id, movie_id, new_title, new_director, new_publication_year, new_rating)
+        return redirect(url_for('list_user_movies', action_result=action_result, user_id=user_id))
 
 
 @app.errorhandler(400)
@@ -177,7 +177,7 @@ if __name__ == '__main__':
 
 
 
-
+#todo  Bootstrap Css stylen
 
 
 
