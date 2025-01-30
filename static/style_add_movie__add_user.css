@@ -52,3 +52,11 @@
       input[type="submit"]:hover {
         background-color: #ff4d4d;
       }
+
+    p {
+    text-align: center;
+    font-size: 1.1em;
+    color: #ff4d4d;
+    margin: 20px auto;
+    width: 80%;
+}

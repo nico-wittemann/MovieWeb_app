@@ -84,7 +84,9 @@ def add_user():
 
     if request.method == 'POST':
         username = request.form['username']
-        data_manager.add_user(username)
+        user_used = data_manager.add_user(username)
+        if user_used:
+            return render_template('add_user.html', user_used=user_used), 200
         success_message = f"User '{username}' has successfully been created."
         return render_template('home.html', success_message=success_message), 201
 
@@ -177,7 +179,8 @@ if __name__ == '__main__':
 
 
 
-#todo  Bootstrap Css stylen
+#todo If you add new user that is already existing make sure its not possible or something but no crash you already implemented that in movies i think
+
 
 
 

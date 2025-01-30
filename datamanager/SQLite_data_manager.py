@@ -89,7 +89,7 @@ class SQLiteDataManager(DataManagerInterface):
         if self._input_not_string(input_username):
             raise TypeError("Username must be a string.")
         if self._username_already_used(input_username):
-            raise ValueError("Username is already used.")
+            return "Username is already used."
 
         try:
             user = User(
@@ -101,6 +101,7 @@ class SQLiteDataManager(DataManagerInterface):
         except SQLAlchemyError as e:
             self.db.session.rollback()
             print(f"A database error occurred while adding the user: {e}")
+
 
 
     def add_movie_to_user(self, user_id, movie_name):
