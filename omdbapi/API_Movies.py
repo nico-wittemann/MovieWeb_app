@@ -1,6 +1,10 @@
-from API_Key import KEY
+import os
+from dotenv import load_dotenv
 import requests
 
+# Load API Key from .env
+load_dotenv()
+API_KEY = os.getenv("API_KEY")
 
 def api_request_data(title: str):
     """
@@ -23,7 +27,7 @@ def api_request_data(title: str):
     """
     try:
         title_request = "&t=" + "+".join(title.split(" "))
-        api_response = requests.get(f"http://www.omdbapi.com/?apikey={KEY}{title_request}")
+        api_response = requests.get(f"http://www.omdbapi.com/?apikey={API_KEY}{title_request}")
         if api_response.status_code == 200:
             movie_infos = api_response.json()
             if "Title" in movie_infos and "Year" in movie_infos and "Poster" in movie_infos:

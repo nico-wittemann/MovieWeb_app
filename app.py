@@ -1,9 +1,8 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
-from datamanager.data_models import db, User, Movie
+from datamanager.data_models import db
 from datamanager.SQLite_data_manager import SQLiteDataManager
-from API_Movies import api_request_data
 
 # Initialize Flask and CORS
 app = Flask(__name__)

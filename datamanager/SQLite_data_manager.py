@@ -1,8 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from datamanager.data_manager_interface import DataManagerInterface
-from datamanager.data_models import User, Movie, db, user_movie_association
-from API_Movies import api_request_data
+from datamanager.data_models import User, Movie, db
+from omdbapi.API_Movies import api_request_data
 
 
 class SQLiteDataManager(DataManagerInterface):
