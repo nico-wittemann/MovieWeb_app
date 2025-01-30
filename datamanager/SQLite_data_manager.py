@@ -5,12 +5,22 @@ from omdbapi.API_Movies import api_request_data
 
 
 class SQLiteDataManager(DataManagerInterface):
+    """A data manager class that interacts with a SQLite database to manage users and their movie collections."""
+
     def __init__(self, db):
+        """Initializes the SQLiteDataManager with the provided SQLAlchemy database session.
+        Args:
+            db: Initialize database connection with db."""
         self.db = db
 
 
     def get_all_users(self):
-        """"""
+        """
+        Retrieves all users from the database.
+
+        Returns:
+            list: List of users as objects.
+        """
         try:
             list_of_all_users = self.db.session.query(User).all()
             return list_of_all_users
@@ -21,6 +31,12 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def get_all_movies(self):
+        """
+        Retrieves all movies from the database.
+
+        Returns:
+            list: List of movies as objects.
+        """
         try:
             list_of_all_movies = self.db.session.query(Movie).all()
             return list_of_all_movies
@@ -31,7 +47,18 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def get_user_movies(self, user_id):
-        """Returns the movie object."""
+        """
+        Retrieves the movies associated with a user by their user ID.
+
+        Args:
+            user_id (int): The ID of the user from whom to retrieve movies.
+
+        Returns:
+            list: A list of Movie objects associated with the user.
+
+        Raises:
+            ValueError: If the user with the given ID does not exist.
+        """
         try:
             user = self.db.session.query(User).get(user_id)
             if not user:
@@ -48,7 +75,16 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def add_user(self, input_username):
-        """"""
+        """
+        Adds a new user to the database.
+
+        Args:
+            input_username (str): The username to be added.
+
+        Raises:
+            TypeError: If the input username is not a string.
+            ValueError: If the username is already taken.
+        """
         if self._input_not_string(input_username):
             raise TypeError("Username must be a string.")
         if self._username_already_used(input_username):
@@ -67,7 +103,16 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def add_movie_to_user(self, user_id, movie_name):
-        """"""
+        """
+        Adds a movie to the user's collection.
+
+        Args:
+            user_id (int): The ID of the user to whom the movie should be added.
+            movie_name (str): The name of the movie to add.
+
+        Returns:
+            str: A success or failure message which will be displayed on user_favourites.html .
+        """
         try:
             user = self.db.session.query(User).get(user_id)
             if not user:
@@ -110,11 +155,25 @@ class SQLiteDataManager(DataManagerInterface):
             print(f"A database error occurred while assigning movie to user: {e}")
 
 
-
-
-
     def update_movie(self, user_id, movie_id, new_title, new_director, new_publication_year, new_rating):
-        """"""
+        """
+        Updates the details of a movie in the user's collection, does not affect the same movie of other users,
+        because a new movie with the new data will be created
+
+        Args:
+            user_id (int): The ID of the user.
+            movie_id (int): The ID of the movie to update.
+            new_title (str): The new title of the movie.
+            new_director (str): The new director of the movie.
+            new_publication_year (string): The new publication year of the movie. Later changed to (int).
+            new_rating (string): The new rating of the movie. Later changed to (float).
+
+        Returns:
+            str: A success or failure message.
+
+        Raises:
+            TypeError: If the input data is not of the expected type.
+        """
         try:
             movie = self.get_movie(movie_id)
             user = self.db.session.query(User).get(user_id)
@@ -153,7 +212,16 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def remove_movie_from_favourites(self, movie_id, user_id):
-        """"""
+        """
+        Removes a movie from the user's collection and deletes it if no users are left with the movie.
+
+        Args:
+            movie_id (int): The ID of the movie to remove.
+            user_id (int): The ID of the user from whose collection the movie should be removed.
+
+        Returns:
+            str: A success or failure message.
+        """
         try:
             movie = self.db.session.query(Movie).get(movie_id)
             if not movie:
@@ -179,7 +247,15 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def get_user(self, user_id):
-        """"""
+        """
+        Retrieves a user by their ID.
+
+        Args:
+            user_id (int): The ID of the user to retrieve.
+
+        Returns:
+            User: The User object if found, otherwise "Unknown".
+        """
         try:
             user = self.db.session.query(User) \
             .filter(User.id == user_id).first()
@@ -193,7 +269,15 @@ class SQLiteDataManager(DataManagerInterface):
 
 
     def get_movie(self, movie_id):
-        """"""
+        """
+        Retrieves a movie by its ID.
+
+        Args:
+            movie_id (int): The ID of the movie to retrieve.
+
+        Returns:
+            Movie: The Movie object if found, otherwise "Unknown".
+        """
         try:
             movie = self.db.session.query(Movie) \
             .filter(Movie.id == movie_id).first()
@@ -206,10 +290,8 @@ class SQLiteDataManager(DataManagerInterface):
             print(f"A database error occurred at getting all movies: {e}")
 
 
-
-
-#Functions for input validation:
     def _username_already_used(self, new_username):
+        """Checks if the username is already taken."""
         existing_user = self.db.session.query(User).filter(User.name == new_username).first()
         if existing_user:
             return True
@@ -217,18 +299,21 @@ class SQLiteDataManager(DataManagerInterface):
             return False
 
     def _input_not_string(self, new_input):
+        """Validates if the input is not a string."""
         if isinstance(new_input, str):
             return False
         else:
             return True
 
     def _input_not_int(self, new_input):
+        """Validates if the input is not an integer."""
         if isinstance(new_input, int):
             return False
         else:
             return True
 
     def _input_not_float_or_None(self, new_input):
+        """Validates if the input is neither a float nor None."""
         if isinstance(new_input, float) or None:
             return False
         else:

@@ -29,19 +29,36 @@ data_manager = SQLiteDataManager(db)
 # Flask Routes
 @app.route('/')
 def home():
+    """Renders the home page of the application."""
     return render_template('home.html'), 200
 
 
 @app.route('/users')
 def list_users():
-    """"""
+    """
+    Renders a list of all users.
+
+    This route fetches all users from the data manager and passes them to
+    the 'users.html' template. The users are displayed in
+    a list format.
+    """
     users = data_manager.get_all_users()
     return render_template('users.html', users=users), 200
 
 
 @app.route('/users/<int:user_id>')
 def list_user_movies(user_id):
-    """"""
+    """
+    Renders a list of movies for a specific user.
+
+    This route retrieves the movies associated with the user (identified by
+    user_id) and displays them in the 'user_favourites.html' template. It shows
+    the movie title, director, publication year, and rating (if available).
+    Users can also delete or update movies with buttons.
+
+    Args:
+        user_id (int): The ID of the user.
+    """
     action_result_add_movie = request.args.get('action_result_add_movie')
     user_movies = data_manager.get_user_movies(user_id)
     user = data_manager.get_user(user_id)
@@ -50,6 +67,16 @@ def list_user_movies(user_id):
 
 @app.route('/add_user', methods=['GET', 'POST']) # add_user 4
 def add_user():
+    """
+    Renders a form to add a new user.
+
+    - GET request: Displays the user creation form ('add_user.html').
+    - POST request: Retrieves the entered username, adds the user to the database,
+      and shows a success message on the homepage.
+
+    Args:
+        username (str): The name of the user to be created (for POST).
+    """
     if request.method == 'GET':
         return render_template('add_user.html'), 200
 
@@ -62,7 +89,16 @@ def add_user():
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST']) # add_movie_to_user 5
 def add_movie_to_user(user_id):
-    """"""
+    """
+    Renders a form to add a new movie to a user's movie list and handles the form.
+
+    - GET request: Displays the movie addition form ('add_movie.html').
+    - POST request: Retrieves the entered movie name, adds the movie to the user's list,
+      and redirects to the user's movie list page with a success message.
+
+    Args:
+        user_id (int): The ID of the user to which the movie will be added.
+    """
     if request.method == 'GET':
         return render_template('add_movie.html', user_id=user_id), 200
 
@@ -74,12 +110,34 @@ def add_movie_to_user(user_id):
 
 @app.route('/users/<int:user_id>/remove_movie/<int:movie_id>', methods=['POST'])
 def remove_movie_from_user(movie_id, user_id):
+    """
+    Removes a movie from a user's favourites and redirects to the user's movie list.
+
+    This route is triggered when the user submits the "Delete" button for a specific movie.
+    The movie is removed from the user's list of favourites, and the page is redirected
+    to the user's movie list with an updated action result message.
+
+    Args:
+        movie_id (int): The ID of the movie to be removed.
+        user_id (int): The ID of the user whose movie list is being modified.
+    """
     action_result_add_movie = data_manager.remove_movie_from_favourites(movie_id, user_id)
     return redirect(url_for('list_user_movies', action_result_add_movie=action_result_add_movie, user_id=user_id))
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST']) # update_movie 6
 def update_movie(movie_id, user_id):
+    """
+    Updates the details of a specific movie for a user.
+
+    - GET: Displays the current details of the movie in an editable form.
+    - POST: Updates the movie's details based on the user's input and redirects
+      to the user's movie list with a success message.
+
+    Args:
+        movie_id (int): The ID of the movie to be updated.
+        user_id (int): The ID of the user whose movie list is being modified.
+    """
     if request.method == 'GET':
         user = data_manager.get_user(user_id)
         movie = data_manager.get_movie(movie_id)
@@ -103,7 +161,7 @@ if __name__ == '__main__':
 
 
 
-#todo Ordnersturktur implementieren
-#todo Comments!:(
+
+
 
 
