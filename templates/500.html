@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internal Server Error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style_errors.css') }}">
 </head>
 <body>
-    <h1>5400 - Internal Server Error</h1>
+    <h1>500 - Internal Server Error</h1>
     <p>{{ e }}</p>
     <a href="{{ url_for('home') }}">Back to home</a>
 </body>

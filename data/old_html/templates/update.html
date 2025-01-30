@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Movie - MovieWeb App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #2e2e2e;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        color: #ff4d4d;
+      }
+
+      h2 {
+        text-align: center;
+        color: #bbb;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 30px;
+      }
+
+      label {
+        margin-top: 10px;
+        color: #bbb;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 300px;
+        border-radius: 5px;
+        border: 1px solid #777;
+        background-color: #3a3a3a;
+        color: #e0e0e0;
+      }
+
+      input[type="text"]:focus,
+      input[type="number"]:focus {
+        outline: none;
+        border-color: #e63946;
+      }
+
+      input[type="submit"] {
+        padding: 10px 20px;
+        border: none;
+        background-color: #e63946;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #ff4d4d;
+      }
+
+      .links {
+        text-align: center;
+        margin-top: 60px;
+      }
+
+      a {
+        color: #d3d3d3;
+        text-decoration: none;
+        background-color: transparent;
+        padding: 12px 24px;
+        font-size: 1em;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-radius: 5px;
+        transition: color 0.3s ease, transform 0.2s ease;
+        display: inline-block;
+      }
+
+      a:hover {
+        color: #e63946;
+        transform: scale(1.05);
+      }
+
+      a:active {
+        color: #808080;
+        transform: scale(1);
+      }
+
+    </style>
+</head>
+<body>
+
+<h1>Update movie for {{ user.name }}</h1>
+<h2>Movie name: {{ movie.title }}</h2>
+<form action="{{ url_for('update_movie', user_id=user.id, movie_id=movie.id) }}" method="POST">
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" value="{{ movie.title }}" required>
+
+  <label for="director">Director:</label>
+  <input type="text" id="director" name="director" value="{{ movie.director }}" required>
+
+  <label for="publication_year">Publication year:</label>
+  <input type="number" id="publication_year" name="publication_year" value="{{ movie.publication_year }}" required>
+
+  <label for="rating">Rating:</label>
+  <input type="number" id="rating" name="rating" value="{{ movie.rating }}" step="0.1" required>
+
+  <input type="submit" value="Update movie">
+</form>
+
+<div class="links">
+  <a href="{{ url_for('home') }}" class="home-link">Home</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Movie - MovieWeb App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #2e2e2e; /* Dunkler Hintergrund */
+        color: #e0e0e0; /* Helle Schriftfarbe */
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        color: #ff4d4d; /* Rote Farbe für die Überschrift */
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 30px;
+      }
+
+      label {
+        margin-top: 10px;
+        color: #bbb; /* Helles Grau für die Labels */
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 300px;
+        border-radius: 5px;
+        border: 1px solid #777; /* Dunklerer Rand */
+        background-color: #3a3a3a; /* Dunkles Grau */
+        color: #e0e0e0;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #e63946; /* Roter Rand bei Fokus */
+      }
+
+      input[type="submit"] {
+        padding: 10px 20px;
+        border: none;
+        background-color: #e63946; /* Rote Farbe für den Button */
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 20px;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #ff4d4d; /* Helleres Rot bei Hover */
+      }
+
+    </style>
+</head>
+<body>
+
+<h1>Add movie</h1>
+  <form action="{{ url_for('add_movie_to_user', user_id=user_id) }}" method="POST">
+    <label for="movie_name">Movie name:</label>
+    <input type="text" id="movie_name" name="movie_name" required><br><br>
+    <input type="submit" value="Add movie">
+  </form>
+
+</body>
+</html>

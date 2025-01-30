@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Users - MovieWeb App</title>
+    <style>
+
+      body {
+          font-family: 'Arial', sans-serif;
+          background-color: #2e2e2e;
+          margin: 0;
+          padding: 0;
+          color: #e0e0e0;
+      }
+
+
+      h1 {
+          text-align: center;
+          color: #ff4d4d;
+          font-size: 2.5em;
+          margin-top: 20px;
+      }
+
+
+      p {
+          text-align: center;
+          font-size: 1.1em;
+          color: #bbb;
+          margin-bottom: 30px;
+      }
+
+
+      ul {
+          list-style-type: none;
+          padding: 0;
+          text-align: center;
+      }
+
+      ul li {
+          background-color: #3a3a3a;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          margin: 10px auto;
+          width: 80%;
+          padding: 15px;
+          font-size: 1.2em;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          box-sizing: border-box;
+      }
+
+      ul li a {
+          text-decoration: none;
+          color: #bbb;
+          font-weight: bold;
+          display: block;
+      }
+
+      /* Hover effect for user names - add a grey border inside the user name block */
+      ul li:hover {
+          border-color: #777; /* Grauer Rand, wenn der Benutzer hovert */
+      }
+
+      ul li:hover a {
+          color: #fff; /* Textfarbe ändern, wenn der Benutzer hovert */
+      }
+
+      /* Link buttons */
+      a {
+          text-decoration: none;
+          color: #fff;
+          background-color: #e63946; /* Rot */
+          padding: 10px 20px;
+          border-radius: 5px;
+          margin: 10px auto;
+          display: block;
+          width: 200px;
+          text-align: center;
+          font-size: 1.1em;
+      }
+
+      /* Hover effect for buttons - change background, not text color */
+      a:hover {
+          background-color: #ff4d4d; /* Helleres Rot */
+      }
+
+      a:active {
+          background-color: #e63946; /* Intensiveres Rot beim Klicken */
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Users</h1>
+    <p>Click on a user to view their movies (list can be edited)</p>
+    <ul>
+        {% for user in users %}
+         <li><a href="{{ url_for('list_user_movies', user_id=user.id) }}">{{ user.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <br><br><br>
+    <a href="{{ url_for('add_user') }}">Add new user</a>
+    <br><br>
+    <a href="{{ url_for('home') }}">Home</a>
+  </body>
+</html>

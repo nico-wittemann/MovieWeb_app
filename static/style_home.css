@@ -1,0 +1,46 @@
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #2e2e2e;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 50px;
+        color: #ff4d4d;
+      }
+
+      .container {
+        width: 80%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .links {
+        text-align: center;
+        margin-top: 30px;
+      }
+
+      .links a {
+        display: block;
+        margin: 10px 0;
+        color: #e63946;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .links a:hover {
+        color: #ff4d4d;
+        text-decoration: underline;
+      }
+
+      .message {
+        text-align: center;
+        margin-top: 20px;
+        color: #28a745;
+      }
