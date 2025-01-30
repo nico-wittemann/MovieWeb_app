@@ -27,11 +27,13 @@
                 <div class="movie-title">{{ movie.title }}</div>
                 <div class="movie-year">{{ movie.director }}</div>
                 <div class="movie-year">{{ movie.publication_year }}</div>
-                {% if movie.rating is none %}
-                    <div class="movie-year">No rating available</div>
-                {% else %}
-                    <div class="movie-year">{{ movie.rating }}/10</div>
-                {% endif %}
+                <div class="movie-year">
+                    {% if movie.rating is not none %}
+                        {{ movie.rating }}/10
+                    {% else %}
+                        No rating available
+                    {% endif %}
+                </div>
 
                 <form method="POST" action="{{ url_for('remove_movie_from_user', user_id=user.id, movie_id=movie.id) }}">
                     <button type="submit">Delete</button>

@@ -59,9 +59,11 @@ def list_user_movies(user_id):
     Args:
         user_id (int): The ID of the user.
     """
+    user = data_manager.get_user(user_id)
     action_result_add_movie = request.args.get('action_result_add_movie')
     user_movies = data_manager.get_user_movies(user_id)
-    user = data_manager.get_user(user_id)
+    if user_movies == "error":
+        return render_template('404.html'), 404
     return render_template('user_favourites.html', user_movies=user_movies, user=user, user_id=user_id, action_result_add_movie=action_result_add_movie), 200
 
 
@@ -84,7 +86,7 @@ def add_user():
         username = request.form['username']
         data_manager.add_user(username)
         success_message = f"User '{username}' has successfully been created."
-        return render_template('home.html', success_message=success_message)
+        return render_template('home.html', success_message=success_message), 201
 
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST']) # add_movie_to_user 5
@@ -141,6 +143,9 @@ def update_movie(movie_id, user_id):
     if request.method == 'GET':
         user = data_manager.get_user(user_id)
         movie = data_manager.get_movie(movie_id)
+        if user == "error" or movie == "error":
+            return render_template('404.html'), 404
+
         return render_template('update.html', user=user, movie=movie)
 
     if request.method == 'POST':

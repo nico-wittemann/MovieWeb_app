@@ -69,6 +69,7 @@ class SQLiteDataManager(DataManagerInterface):
         except ValueError as e:
             self.db.session.rollback()
             print(e)
+            return "error"
         except SQLAlchemyError as e:
             self.db.session.rollback()
             print(f"A database error occurred getting the assigned movies from a user: {e}")
@@ -260,7 +261,7 @@ class SQLiteDataManager(DataManagerInterface):
             user = self.db.session.query(User) \
             .filter(User.id == user_id).first()
             if not user:
-                return "Unknown"
+                return "error"
             return user
 
         except SQLAlchemyError as e:
@@ -282,7 +283,7 @@ class SQLiteDataManager(DataManagerInterface):
             movie = self.db.session.query(Movie) \
             .filter(Movie.id == movie_id).first()
             if not movie:
-                return "Unknown"
+                return "error"
             return movie
 
         except SQLAlchemyError as e:
