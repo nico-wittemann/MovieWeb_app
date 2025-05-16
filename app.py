@@ -179,7 +179,7 @@ if __name__ == '__main__':
 
 
 
-#todo If you add new user that is already existing make sure its not possible or something but no crash you already implemented that in movies i think
+
 
 
 

@@ -12,7 +12,6 @@ user_movie_association  = db.Table(
 class User(db.Model):
     """User Table"""
     __tablename__ = 'users'
-
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String, nullable=False)
     movies = db.relationship('Movie', secondary=user_movie_association, back_populates='users')
